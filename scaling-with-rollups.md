@@ -27,11 +27,12 @@ The only downside to Optimistic Rollups is that it takes a long waiting period f
 
 ### ZK Rollups:
   ZK Rollups also bundles hundreds of transactions into a single transaction, but they use the zero-knowledge cryptography and submit the proof on-chain. To simply understand how zero knowledge proofs work, lets consider an example. Let’s say Bob wants to know that if Alice knows the data that hashes to 0xfd21. We know that hash algorithms are one way i.e., they can’t be reversed. The naive way is that Alice shares their data to Bob so he can hash the data and check if it is equal to 0xfd21. However, this involves the sharing of data by Alice which may be sensitive. Whereas, with the zero knowledge Alice can prove to bob that she knows the data without sharing the data. The Bob will initiate a function generateKeys(C, lambda) where c and lambda can be arbitrary seeding variables. This function returns a proving key (Pk) and verifying key (Vk). Bob shares the keys with Alice. Alice can run another function generateProof(Pk, data) which would return a zero knowledge proof. She shares the proof to Bob and he can run a function verifyProof(Proof, Vk, targetHash). If the verify function returns true, this implies that Alice knows the data which hashed to the targetHash. Bob does not share the seeding variables (C and lambda) to Alice otherwise she can create fake proofs. The cryptographic implementation of these functions is extremely complicated, but the general concept is easier to understand.
-```
+```typescript
 const data = '*****' //only Alice knows this
 const targetHash = '0xfd21'
 
-Hash(data) = '0xfd21' /* Bob wants to know that alice
+const hash = Hash(data) //'0xfd21' 
+/* Bob wants to know that alice
 knows the key whose hash is equal to 0xfd21
 */
 
@@ -40,7 +41,7 @@ const [C, lambda] = randomSeed()
 
 const [provingKey, VerifyingKey] = generateKeys(C, lambda)
 
-Bob passes Pk and Vk to Alice
+//Bob passes Proving key and Verifying key to Alice
 
 // ALice uses Proving Key to generate proof
 const proof = generateProof(data, provingKey)
@@ -48,7 +49,7 @@ const proof = generateProof(data, provingKey)
 // Alice submits proof to Bob
 // Bob verifies the proof
 
-const isProofValid : boolean = verify(data, verifyingKey, targetHash)
+const isProofValid: Boolean = verify(data, verifyingKey, targetHash)
 isProofValid ? "Alice knows the answer" : "Alice does not know"
 ```
   Woah! I just uttered so much gibberish just so that Alice can prove to Bob a simple piece of data without revealing the data. I won’t apologize as the zero knowledge proofs are complicated in nature. This was a general example to simplify the concept but how all of this relate to use of ZK Rollups in blockchains? Simple transactions in which users have to send some funds to other account requires the user to reveal their balance and the transfer amount to prove that they have enough funds to transfer {balance > transfer amount}. What if we could use to zero knowledge cryptography to prove that the sender has more balance that the transaction value without revealing either of them. Although, it seems utopic. Zero knowledge accomplishes this in a very sophisticated manner. Effectively implemented zero knowledge cryptographic can give robust functions that ensures creating a fake proof is practically impossible. 
